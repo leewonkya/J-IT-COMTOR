@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giáo án Đào tạo IT Comtor (SPA)</title>
+    <!-- Tải Tailwind CSS CDN để tạo giao diện responsive và hiện đại -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tải Font Inter của Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        /* Sử dụng font Inter cho toàn bộ trang web */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fc; /* Màu nền nhẹ nhàng */
+        }
+        /* Style cho thanh sidebar - làm cho nó cố định */
+        #sidebar {
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease-in-out; /* Thêm transition cho hiệu ứng ẩn/hiện */
+            z-index: 50; /* Cao hơn nội dung chính một chút */
+            width: 18rem; /* Kích thước cố định (w-72) */
+        }
+        
+        /* Trạng thái ẩn của Sidebar trên Mobile */
+        .sidebar-hidden #sidebar {
+            transform: translateX(-100%);
+            position: fixed;
+            left: 0;
+            top: 64px; 
+            width: 18rem; 
+        }
+
+        /* Đảm bảo sidebar mở chiếm đúng kích thước */
+        .sidebar-visible #sidebar {
+             transform: translateX(0);
+             position: fixed;
+             left: 0;
+             top: 64px;
+             width: 18rem; 
+             height: calc(100vh - 64px); /* Chiều cao đầy đủ trừ Navbar */
+        }
+        
+        /* Khi sidebar hiển thị trên mobile, cần có lớp phủ */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 40;
+            display: none;
+        }
+        .sidebar-visible .sidebar-overlay {
+            display: block;
+        }
+
+
+        #sidebar::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+        /* Style cho các mục menu được chọn/active */
+        .sidebar-link.active {
+            background-color: #e0f2fe; /* Màu nền xanh nhạt */
+            color: #0d9488; /* Màu chữ xanh đậm */
+            border-left: 4px solid #0d9488; /* Thanh màu nổi bật bên trái */
+            font-weight: 600; /* Chữ đậm */
+        }
+        /* Cố định Navbar ở trên cùng */
+        #navbar {
+            z-index: 100;
+        }
+        /* Đảm bảo nội dung chính bắt đầu bên dưới Navbar và bên cạnh Sidebar */
+        #main-content-container {
+            padding-top: 64px; /* Bằng chiều cao của Navbar (h-16) */
+        }
+
+        /* Điều chỉnh Main Content khi Sidebar bị ẩn/hiện trên Desktop */
+        @media (min-width: 768px) {
+            #sidebar {
+                position: sticky;
+                top: 64px;
+                /* Đảm bảo hiển thị trên Desktop bất kể class body là gì */
+                transform: translateX(0) !important; 
+            }
+            /* Gỡ bỏ vị trí cố định trên Desktop để nó bám theo nội dung */
+            .sidebar-visible #sidebar, .sidebar-hidden #sidebar {
+                position: sticky;
+                height: calc(100vh - 64px);
+                top: 64px;
+            }
+        }
+    </style>
+</head>
+<!-- Đã loại bỏ class "sidebar-hidden" khỏi body ban đầu -->
+<body class="text-gray-800">
+
+    <!-- 1. NAVBAR (Thanh điều hướng cố định) -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 bg-white shadow-lg h-16 flex items-center justify-between px-4 sm:px-8 border-b border-gray-100">
+        <!-- Nút Toggle Sidebar (Chỉ hiển thị trên Mobile) -->
+        <button id="sidebar-toggle-mobile" class="md:hidden text-teal-600 hover:text-teal-800 p-2 rounded-lg transition duration-150">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+        
+        <div class="text-xl font-bold text-teal-700 cursor-pointer" onclick="renderContent('summary')">
+            IT Comtor Curriculum (SPA)
+        </div>
+        <div class="flex items-center space-x-4">
+            <span class="text-sm hidden sm:block text-gray-500">Người soạn: DEV99</span>
+        </div>
+    </nav>
+
+    <!-- Overlay cho mobile khi sidebar mở -->
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+    <!-- 2. MAIN LAYOUT (Sidebar và Nội dung chính) -->
+    <div id="main-content-container" class="flex">
+
+        <!-- 2a. SIDEBAR (Thanh menu bên trái) -->
+        <aside id="sidebar" class="bg-white border-r border-gray-200 pt-6 flex-shrink-0 md:sticky">
+            <div class="px-4">
+                <h2 class="text-lg font-semibold mb-4 text-teal-800 border-b pb-2">Mục Lục Giáo Án</h2>
+                <nav id="curriculum-menu">
+                    <!-- Các mục sẽ được điền bằng JavaScript -->
+                </nav>
+            </div>
+        </aside>
+
+        <!-- 2b. MAIN CONTENT (Nội dung chi tiết) -->
+        <!-- Đây là nơi nội dung sẽ được tải động -->
+        <main id="main-content" class="flex-1 p-6 sm:p-10 md:p-12 overflow-x-hidden">
+            <!-- Nội dung tóm tắt sẽ được tải ở đây khi trang load lần đầu -->
+            <div class="text-center p-20 text-gray-400">Đang tải nội dung...</div>
+        </main>
+    </div>
+
+    <script>
+        // --- DATA STRUCTURE (NỘI DUNG CHI TIẾT) ---
+        const curriculumData = {
+            'summary': {
+                title: 'Giáo án Đào tạo IT Comtor (Thuần Kỹ thuật)',
+                subtitle: 'Chương trình tập trung vào các kiến thức nền tảng và công cụ kỹ thuật cốt lõi cho IT Communicator.',
+                content: `
+                    <!-- Nội dung TÓM TẮT cho 6 giai đoạn -->
+                    <div class="space-y-8">
+                        <!-- GIAI ĐOẠN 1: Kiến thức nền IT (TÓM TẮT) -->
+                        <section id="giai-doan-1" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg transition transform hover:shadow-xl duration-300 border-l-4 border-blue-500">
+                            <h2 class="text-3xl font-bold text-teal-700 mb-4">Giai đoạn 1: Kiến thức nền IT</h2>
+                            <p class="text-lg text-gray-700 mb-4">
+                                Tập trung vào các khái niệm cơ bản về kiến trúc phần mềm (**Client-Server, API, HTTP**), cách lưu trữ dữ liệu (**RDBMS**) và vai trò Comtor trong dự án.
+                            </p>
+                            <button onclick="renderContent('giai-doan-1')" class="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold transition duration-150 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-lg">
+                                Xem Chi Tiết 
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        </section>
+
+                        <!-- GIAI ĐOẠN 2: Công cụ quản lý dự án (TÓM TẮT) -->
+                        <section id="giai-doan-2" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg transition transform hover:shadow-xl duration-300 border-l-4 border-green-500">
+                            <h2 class="text-3xl font-bold text-teal-700 mb-4">Giai đoạn 2: Công cụ quản lý dự án (PM Tools)</h2>
+                            <p class="text-lg text-gray-700 mb-4">
+                                Thành thạo việc sử dụng **Jira/Redmine** để quản lý Ticket, Task, Bug theo mô hình **Agile** (Scrum/Kanban) và quy tắc giao tiếp hiệu quả trên **Slack**.
+                            </p>
+                            <button onclick="renderContent('giai-doan-2')" class="inline-flex items-center text-green-600 hover:text-green-800 font-semibold transition duration-150 bg-green-50 hover:bg-green-100 px-4 py-2 rounded-lg">
+                                Xem Chi Tiết 
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        </section>
+
+                        <!-- GIAI ĐOẠN 3: Quản lý mã nguồn & Version Control (TÓM TẮT) -->
+                        <section id="giai-doan-3" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg transition transform hover:shadow-xl duration-300 border-l-4 border-yellow-500">
+                            <h2 class="text-3xl font-bold text-teal-700 mb-4">Giai đoạn 3: Quản lý mã nguồn & Version Control</h2>
+                            <p class="text-lg text-gray-700 mb-4">
+                                Nắm vững cơ chế phân tán của **Git**, biết các lệnh cơ bản và hiểu quy trình **Branching Strategy** để quản lý mã nguồn chuyên nghiệp.
+                            </p>
+                            <button onclick="renderContent('giai-doan-3')" class="inline-flex items-center text-yellow-600 hover:text-yellow-800 font-semibold transition duration-150 bg-yellow-50 hover:bg-yellow-100 px-4 py-2 rounded-lg">
+                                Xem Chi Tiết 
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        </section>
+                        
+                        <!-- GIAI ĐOẠN 4: Quy trình phát triển phần mềm (TÓM TẮT) -->
+                        <section id="giai-doan-4" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg transition transform hover:shadow-xl duration-300 border-l-4 border-red-500">
+                            <h2 class="text-3xl font-bold text-teal-700 mb-4">Giai đoạn 4: Quy trình phát triển phần mềm (SDLC)</h2>
+                            <p class="text-lg text-gray-700 mb-4">
+                                Hiểu các mô hình **Scrum, Kanban** và vai trò của **CI/CD** là chìa khóa để dịch thuật quy trình phát triển dự án.
+                            </p>
+                            <button onclick="renderContent('giai-doan-4')" class="inline-flex items-center text-red-600 hover:text-red-800 font-semibold transition duration-150 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg">
+                                Xem Chi Tiết 
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        </section>
+                        
+                        <!-- GIAI ĐOẠN 5: Testing & QA (TÓM TẮT) -->
+                        <section id="giai-doan-5" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg transition transform hover:shadow-xl duration-300 border-l-4 border-indigo-500">
+                            <h2 class="text-3xl font-bold text-teal-700 mb-4">Giai đoạn 5: Testing & QA</h2>
+                            <p class="text-lg text-gray-700 mb-4">
+                                Nắm được các cấp độ **Test** (Unit, Integration, System, Acceptance), phân biệt **Manual** và **Automation Test**, và biết cách viết **Test Case** cơ bản.
+                            </p>
+                            <button onclick="renderContent('giai-doan-5')" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 font-semibold transition duration-150 bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-lg">
+                                Xem Chi Tiết 
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        </section>
+                        
+                        <!-- GIAI ĐOẠN 6: Triển khai & Vận hành (TÓM TẮT) -->
+                        <section id="giai-doan-6" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg transition transform hover:shadow-xl duration-300 border-l-4 border-pink-500">
+                            <h2 class="text-3xl font-bold text-teal-700 mb-4">Giai đoạn 6: Triển khai & Vận hành (DevOps Basics)</h2>
+                            <p class="text-lg text-gray-700 mb-4">
+                                Khám phá các khái niệm về **Linux Command**, **Cloud Service** (AWS/Azure/GCP) và công cụ **Monitoring** hệ thống (Grafana/Kibana).
+                            </p>
+                            <button onclick="renderContent('giai-doan-6')" class="inline-flex items-center text-pink-600 hover:text-pink-800 font-semibold transition duration-150 bg-pink-50 hover:bg-pink-100 px-4 py-2 rounded-lg">
+                                Xem Chi Tiết 
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        </section>
+                    </div>
+                `,
+                isSummary: true
+            },
+            'giai-doan-1': {
+                title: 'Giai đoạn 1: Kiến thức nền IT Cốt lõi',
+                subtitle: 'Nền tảng vững chắc để hiểu cấu trúc và luồng dữ liệu của một hệ thống phần mềm.',
+                content: `
+                    <div class="space-y-6">
+                        <div class="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg">
+                            <h3 class="text-xl font-semibold text-blue-800">1. Tổng quan IT Project</h3>
+                            <p class="mt-2 text-gray-700">Comtor cần nắm rõ **vòng đời dự án (SDLC)**, các bên liên quan (**Stakeholders: PM, Developer, QA, Client**) và mục tiêu kinh doanh của sản phẩm.</p>
+                        </div>
+
+                        <div class="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg">
+                            <h3 class="text-xl font-semibold text-blue-800">2. Hệ thống quản lý cơ sở dữ liệu (RDBMS)</h3>
+                            <p class="mt-2 text-gray-700">Tập trung vào các hệ thống quan hệ như **MySQL, PostgreSQL, SQL Server**. Hiểu về khái niệm **Table, Row, Column, Primary Key, Foreign Key** và cách dữ liệu được truy vấn qua **SQL** là rất quan trọng.</p>
+                            <ul class="list-disc ml-6 mt-2 text-sm text-gray-600">
+                                <li>**Yêu cầu:** Đọc hiểu các từ khóa SQL cơ bản: SELECT, FROM, WHERE, JOIN.</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg">
+                            <h3 class="text-xl font-semibold text-blue-800">3. Khái niệm API</h3>
+                            <p class="mt-2 text-gray-700">API (**Application Programming Interface**) là cầu nối giao tiếp giữa các hệ thống. Cần phân biệt:</p>
+                            <ul class="list-disc ml-6 mt-2 text-gray-700">
+                                <li>**REST/RESTful API:** Phổ biến nhất hiện nay, sử dụng các phương thức HTTP (GET, POST, PUT, DELETE).</li>
+                                <li>**SOAP:** Giao thức cũ hơn, dựa trên XML.</li>
+                                <li>**JSON/XML:** Các định dạng dữ liệu thường được sử dụng để truyền tải qua API. Comtor cần dịch được cấu trúc JSON.</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg">
+                            <h3 class="text-xl font-semibold text-blue-800">4. Mô hình Client – Server & Giao thức mạng</h3>
+                            <p class="mt-2 text-gray-700">Hiểu rõ **Client** (Trình duyệt, ứng dụng di động) gửi yêu cầu đến **Server** (Nơi xử lý dữ liệu) và nhận phản hồi. Các giao thức cốt lõi:</p>
+                            <ul class="list-disc ml-6 mt-2 text-gray-700">
+                                <li>**HTTP/HTTPS:** Giao thức truyền tải siêu văn bản (Hypertext Transfer Protocol). HTTPS có thêm lớp bảo mật (SSL/TLS).</li>
+                                <li>**TCP/IP:** Nền tảng của Internet, chịu trách nhiệm cho việc truyền dữ liệu đáng tin cậy.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <button onclick="renderContent('summary')" class="mt-8 px-6 py-2 bg-teal-600 text-white font-semibold rounded-lg shadow-md hover:bg-teal-700 transition duration-200">
+                        Quay lại Tổng quan
+                    </button>
+                `
+            },
+            'giai-doan-2': {
+                title: 'Giai đoạn 2: Công cụ quản lý dự án (PM Tools)',
+                subtitle: 'Thành thạo các công cụ giúp theo dõi tiến độ, quản lý yêu cầu và giao tiếp trong team.',
+                content: `
+                    <div class="space-y-6">
+                        <div class="p-4 bg-green-50 border-l-4 border-green-500 rounded-lg">
+                            <h3 class="text-xl font-semibold text-green-800">1. Redmine: Quản lý Ticket</h3>
+                            <p class="mt-2 text-gray-700">Sử dụng để quản lý các loại **Ticket (Issue)** như **Task (Nhiệm vụ), Bug (Lỗi), Feature (Tính năng mới)**. Comtor cần đảm bảo mô tả ticket rõ ràng, chính xác và bám sát yêu cầu từ khách hàng.</p>
+                            <ul class="list-disc ml-6 mt-2 text-sm text-gray-600">
+                                <li>**Yêu cầu:** Biết cách phân loại (Tracker), gán người xử lý (Assignee) và cập nhật trạng thái (Status).</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-4 bg-green-50 border-l-4 border-green-500 rounded-lg">
+                            <h3 class="text-xl font-semibold text-green-800">2. Jira: Agile Board</h3>
+                            <p class="mt-2 text-gray-700">Jira mạnh mẽ trong việc quản lý theo phương pháp **Agile**.</p>
+                            <ul class="list-disc ml-6 mt-2 text-gray-700">
+                                <li>**Scrum:** Quản lý theo Sprint (chu kỳ ngắn), sử dụng **Scrum Board** để theo dõi tiến độ Daily.</li>
+                                <li>**Kanban:** Tập trung vào luồng công việc liên tục, giới hạn công việc đang tiến hành (WIP).</li>
+                                <li>**Comtor Role:** Tham gia Daily Scrum Meeting, dịch thuật các vấn đề blocker, cập nhật mô tả Story/Task từ tiếng Nhật sang tiếng Việt và ngược lại.</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-4 bg-green-50 border-l-4 border-green-500 rounded-lg">
+                            <h3 class="text-xl font-semibold text-green-800">3. So sánh Jira vs Redmine</h3>
+                            <p class="mt-2 text-gray-700">Nắm được ưu và nhược điểm của hai công cụ để có thể tư vấn hoặc chuyển đổi nếu cần:</p>
+                            <ul class="list-disc ml-6 mt-2 text-gray-700">
+                                <li>**Jira:** Mạnh về Agile, nhiều tính năng tích hợp, chi phí cao, phức tạp hơn.</li>
+                                <li>**Redmine:** Đơn giản, mã nguồn mở, tùy biến cao, thường dùng cho các dự án nhỏ hoặc team thích sự gọn nhẹ.</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-4 bg-green-50 border-l-4 border-green-500 rounded-lg">
+                            <h3 class="text-xl font-semibold text-green-800">4. Slack: Công cụ giao tiếp</h3>
+                            <p class="mt-2 text-gray-700">Quản lý kênh giao tiếp chính. Comtor phải thiết lập **quy tắc giao tiếp (Communication Protocol)** rõ ràng, sử dụng **Thread** hiệu quả và ưu tiên truyền tải các thông tin quan trọng qua kênh thích hợp.</p>
+                            <ul class="list-disc ml-6 mt-2 text-sm text-gray-600">
+                                <li>**Chủ động:** Không chờ đợi, chủ động xác nhận thông tin đã dịch.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <button onclick="renderContent('summary')" class="mt-8 px-6 py-2 bg-teal-600 text-white font-semibold rounded-lg shadow-md hover:bg-teal-700 transition duration-200">
+                        Quay lại Tổng quan
+                    </button>
+                `
+            },
+            'giai-doan-3': { 
+                title: 'Giai đoạn 3: Quản lý mã nguồn & Version Control', 
+                subtitle: 'Nắm vững Git/SVN để quản lý và theo dõi sự thay đổi của mã nguồn trong quá trình phát triển.', 
+                content: `
+                    <div class="space-y-6">
+                        <div class="p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-lg">
+                            <h3 class="text-xl font-semibold text-yellow-800">1. Git & Version Control (Hệ thống phân tán)</h3>
+                            <p class="mt-2 text-gray-700">**Git** là hệ thống quản lý phiên bản phân tán (Distributed Version Control System - DVCS) phổ biến nhất. Comtor cần hiểu các khái niệm và lệnh cơ bản để theo dõi tiến độ dev/merge.</p>
+                            <ul class="list-disc ml-6 mt-2 text-gray-700">
+                                <li>**Cơ chế:** **clone, commit, push, pull, branch, merge**. Hiểu được khi nào cần **rebase** hay **merge**.</li>
+                                <li>**Branching Strategy:** Hiểu về các mô hình phát triển như **GitFlow** hoặc **GitHub Flow** (Main/Master, Develop, Feature branches).</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-lg">
+                            <h3 class="text-xl font-semibold text-yellow-800">2. SVN (Subversion - Hệ thống tập trung)</h3>
+                            <p class="mt-2 text-gray-700">**SVN** là hệ thống quản lý phiên bản tập trung (Centralized Version Control System - CVCS). Cần nắm được điểm khác biệt cốt lõi:</p>
+                            <ul class="list-disc ml-6 mt-2 text-gray-700">
+                                <li>**Khác biệt:** SVN chỉ có một Repository tập trung, trong khi Git mỗi developer có một bản sao Repository.</li>
+                                <li>**Comtor Role:** Dịch các thông báo **Conflict (xung đột)** khi merge code và thông báo về các vấn đề **Commit** lỗi.</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-lg">
+                            <h3 class="text-xl font-semibold text-yellow-800">3. Hosting Platforms</h3>
+                            <p class="mt-2 text-gray-700">Các nền tảng lưu trữ mã nguồn trực tuyến:</p>
+                            <ul class="list-disc ml-6 mt-2 text-gray-700">
+                                <li>**GitHub:** Phổ biến nhất.</li>
+                                <li>**GitLab:** Cung cấp giải pháp CI/CD tích hợp mạnh mẽ.</li>
+                                <li>**Bitbucket:** Thường dùng kết hợp với Jira (của Atlassian).</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <button onclick="renderContent('summary')" class="mt-8 px-6 py-2 bg-teal-600 text-white font-semibold rounded-lg shadow-md hover:bg-teal-700 transition duration-200">
+                        Quay lại Tổng quan
+                    </button>
+                ` 
+            },
+            'giai-doan-4': { 
+                title: 'Giai đoạn 4: Quy trình phát triển phần mềm (SDLC)', 
+                subtitle: 'Hiểu các mô hình và vòng đời phát triển để quản lý luồng công việc của dự án.', 
+                content: `
+                    <div class="space-y-6">
+                        <div class="p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">
+                            <h3 class="text-xl font-semibold text-red-800">1. Vòng đời phát triển phần mềm (SDLC)</h3>
+                            <p class="mt-2 text-gray-700">SDLC là quá trình từ khi ý tưởng hình thành đến khi sản phẩm được triển khai và bảo trì. Gồm các bước cơ bản: **Planning, Requirement Analysis, Design, Implementation (Coding), Testing, Deployment, Maintenance.**</p>
+                            <ul class="list-disc ml-6 mt-2 text-sm text-gray-600">
+                                <li>**Comtor Role:** Dịch thuật và xác nhận các tài liệu ở giai đoạn **Analysis & Design**.</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">
+                            <h3 class="text-xl font-semibold text-red-800">2. Mô hình Waterfall (Thác nước)</h3>
+                            <p class="mt-2 text-gray-700">Mô hình tuần tự, mỗi giai đoạn phải hoàn thành trước khi chuyển sang giai đoạn tiếp theo. Thích hợp cho các dự án có yêu cầu rõ ràng, ít thay đổi.</p>
+                            <ul class="list-disc ml-6 mt-2 text-gray-700">
+                                <li>**Nhược điểm:** Khó thay đổi yêu cầu ở giai đoạn sau.</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">
+                            <h3 class="text-xl font-semibold text-red-800">3. Mô hình Agile & Khung làm việc Scrum/Kanban</h3>
+                            <p class="mt-2 text-gray-700">Phương pháp lặp, linh hoạt, tập trung vào sự hợp tác và phản hồi nhanh chóng từ khách hàng. Comtor cần nắm rõ vai trò các thành viên trong Scrum (Product Owner, Scrum Master, Development Team).</p>
+                            <ul class="list-disc ml-6 mt-2 text-gray-700">
+                                <li>**Scrum:** **Sprint, Daily Stand-up, Sprint Review, Sprint Retrospective.**</li>
+                                <li>**Kanban:** **WIP Limit, Flow, Column/Swimlane.**</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">
+                            <h3 class="text-xl font-semibold text-red-800">4. CI/CD cơ bản (Continuous Integration/Deployment)</h3>
+                            <p class="mt-2 text-gray-700">Tự động hóa các bước Build, Test và Deploy. Giúp giảm lỗi và tăng tốc độ release.</p>
+                            <ul class="list-disc ml-6 mt-2 text-gray-700">
+                                <li>**Công cụ:** **Jenkins, GitHub Actions, GitLab CI.**</li>
+                                <li>**Comtor Role:** Nắm được lịch trình CI/CD và thông báo kịp thời khi hệ thống tự động hóa gặp lỗi.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <button onclick="renderContent('summary')" class="mt-8 px-6 py-2 bg-teal-600 text-white font-semibold rounded-lg shadow-md hover:bg-teal-700 transition duration-200">
+                        Quay lại Tổng quan
+                    </button>
+                ` 
+            },
+            'giai-doan-5': { 
+                title: 'Giai đoạn 5: Testing & QA', 
+                subtitle: 'Hiểu các loại hình và quy trình kiểm thử để dịch thuật Bug/Issue một cách chính xác.', 
+                content: `
+                    <div class="space-y-6">
+                        <div class="p-4 bg-indigo-50 border-l-4 border-indigo-500 rounded-lg">
+                            <h3 class="text-xl font-semibold text-indigo-800">1. Các cấp độ Test</h3>
+                            <p class="mt-2 text-gray-700">Mỗi cấp độ đảm bảo chất lượng ở một giai đoạn khác nhau của quá trình phát triển:</p>
+                            <ul class="list-disc ml-6 mt-2 text-gray-700">
+                                <li>**Unit Test:** Kiểm thử từng module/hàm nhỏ nhất (thường do Dev làm).</li>
+                                <li>**Integration Test:** Kiểm thử sự tương tác giữa các module.</li>
+                                <li>**System Test:** Kiểm thử toàn bộ hệ thống (kiểm tra Functional và Non-functional requirements).</li>
+                                <li>**Acceptance Test (UAT):** Kiểm thử chấp nhận của người dùng (thường do Client/Business Analyst làm).</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-4 bg-indigo-50 border-l-4 border-indigo-500 rounded-lg">
+                            <h3 class="text-xl font-semibold text-indigo-800">2. Manual Test vs Automation Test</h3>
+                            <p class="mt-2 text-gray-700">Sự khác biệt trong phương pháp thực hiện kiểm thử:</p>
+                            <ul class="list-disc ml-6 mt-2 text-gray-700">
+                                <li>**Manual Test:** Thực hiện thủ công (tốt cho Exploratory Testing, Usability).</li>
+                                <li>**Automation Test:** Sử dụng script/tool để tự động chạy Test Case (tốt cho Regression Test, Load Test).</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-4 bg-indigo-50 border-l-4 border-indigo-500 rounded-lg">
+                            <h3 class="text-xl font-semibold text-indigo-800">3. Công cụ Test phổ biến</h3>
+                            <p class="mt-2 text-gray-700">Comtor cần biết các công cụ này để dịch các thông báo lỗi và log:</p>
+                            <ul class="list-disc ml-6 mt-2 text-gray-700">
+                                <li>**Selenium:** Dùng cho Automation Test UI (Giao diện người dùng).</li>
+                                <li>**Postman:** Dùng để test API (kiểm tra response, status code).</li>
+                                <li>**JUnit/NUnit/Pytest:** Dùng cho Unit Test (Dev sử dụng).</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="p-4 bg-indigo-50 border-l-4 border-indigo-500 rounded-lg">
+                            <h3 class="text-xl font-semibold text-indigo-800">4. Cách viết Test Case cơ bản</h3>
+                            <p class="mt-2 text-gray-700">Hiểu cấu trúc của một Test Case chất lượng giúp Comtor dịch thuật các bước reproduce Bug chính xác:</p>
+                            <ul class="list-disc ml-6 mt-2 text-gray-700">
+                                <li>**Thành phần:** ID, Mục tiêu Test (Purpose), Các bước thực hiện (Steps), Kết quả mong muốn (Expected Result), Kết quả thực tế (Actual Result).</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <button onclick="renderContent('summary')" class="mt-8 px-6 py-2 bg-teal-600 text-white font-semibold rounded-lg shadow-md hover:bg-teal-700 transition duration-200">
+                        Quay lại Tổng quan
+                    </button>
+                ` 
+            },
+            'giai-doan-6': { 
+                title: 'Giai đoạn 6: Triển khai & Vận hành (DevOps Basics)', 
+                subtitle: 'Kiến thức cơ bản về môi trường Server, Cloud và cách theo dõi hiệu suất hệ thống.', 
+                content: `
+                    <div class="space-y-6">
+                        <div class="p-4 bg-pink-50 border-l-4 border-pink-500 rounded-lg">
+                            <h3 class="text-xl font-semibold text-pink-800">1. Linux Command cơ bản</h3>
+                            <p class="mt-2 text-gray-700">Hầu hết các Server đều chạy trên Linux. Comtor cần biết các lệnh cơ bản để theo dõi File Log, kiểm tra trạng thái dịch vụ.</p>
+                            <ul class="list-disc ml-6 mt-2 text-gray-700">
+                                <li>**Lệnh thường dùng:** **ls, cd, cp, mv, rm, cat, grep, tail -f** (quan trọng để đọc log theo thời gian thực).</li>
+                                <li>**SSH/SFTP:** Hiểu cách kết nối từ xa đến Server.</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-4 bg-pink-50 border-l-4 border-pink-500 rounded-lg">
+                            <h3 class="text-xl font-semibold text-pink-800">2. Cloud Service Overview (AWS/Azure/GCP)</h3>
+                            <p class="mt-2 text-gray-700">Mô hình điện toán đám mây là xu hướng. Comtor cần nắm được dịch vụ nào là gì (IaaS, PaaS, SaaS) và các dịch vụ cơ bản:</p>
+                            <ul class="list-disc ml-6 mt-2 text-gray-700">
+                                <li>**AWS:** EC2 (Server), S3 (Storage), RDS (Database).</li>
+                                <li>**Azure:** Virtual Machines, Storage, Azure SQL Database.</li>
+                                <li>**Khái niệm:** Tầm quan trọng của **Scalability (Khả năng mở rộng)** và **High Availability (Tính sẵn sàng cao)**.</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-4 bg-pink-50 border-l-4 border-pink-500 rounded-lg">
+                            <h3 class="text-xl font-semibold text-pink-800">3. Monitoring Tool</h3>
+                            <p class="mt-2 text-gray-700">Công cụ giúp theo dõi hiệu suất, tài nguyên và lỗi của hệ thống sau khi triển khai.</p>
+                            <ul class="list-disc ml-6 mt-2 text-gray-700">
+                                <li>**Grafana:** Dùng để trực quan hóa dữ liệu Metric (CPU Load, Memory Usage).</li>
+                                <li>**Kibana (ELK Stack):** Dùng để tìm kiếm và phân tích Log hệ thống (giúp truy vết lỗi nhanh chóng).</li>
+                                <li>**Comtor Role:** Dịch các ngưỡng cảnh báo (Alert) và báo cáo hiệu suất hệ thống cho khách hàng.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <button onclick="renderContent('summary')" class="mt-8 px-6 py-2 bg-teal-600 text-white font-semibold rounded-lg shadow-md hover:bg-teal-700 transition duration-200">
+                        Quay lại Tổng quan
+                    </button>
+                ` 
+            }
+        };
+
+        // --- JAVASCRIPT ĐIỀU KHIỂN GIAO DIỆN VÀ CUỘN TRANG (CẬP NHẬT) ---
+
+        const mainContentElement = document.getElementById('main-content');
+        const curriculumMenu = document.getElementById('curriculum-menu');
+        const sidebar = document.getElementById('sidebar');
+
+        // Hàm chính để render nội dung động
+        function renderContent(key) {
+            const data = curriculumData[key];
+            if (!data) return;
+
+            // 1. Tạo HTML cho nội dung mới
+            let newContentHTML = '';
+
+            // Chỉ thêm Header nếu KHÔNG phải là trang Summary
+            if (!data.isSummary) {
+                newContentHTML += `
+                    <header class="mb-10">
+                        <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 leading-tight">${data.title}</h1>
+                        <p class="mt-3 text-xl text-teal-600">${data.subtitle}</p>
+                        <div class="mt-5 border-t border-gray-200 pt-5">
+                            <span class="inline-flex items-center rounded-full bg-blue-100 px-3 py-0.5 text-sm font-medium text-blue-800">
+                                SPA Mode Active
+                            </span>
+                        </div>
+                    </header>
+                `;
+            } else {
+                // Nếu là Summary, hiển thị tiêu đề chính của giáo án
+                newContentHTML += `
+                    <header class="mb-10">
+                        <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 leading-tight">${data.title}</h1>
+                        <p class="mt-3 text-xl text-teal-600">${data.subtitle}</p>
+                        <div class="mt-5 border-t border-gray-200 pt-5">
+                            <span class="inline-flex items-center rounded-full bg-blue-100 px-3 py-0.5 text-sm font-medium text-blue-800">
+                                Level: Foundation to Intermediate
+                            </span>
+                            <span class="ml-3 inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">
+                                Phạm vi: Technical & Tools
+                            </span>
+                        </div>
+                    </header>
+                `;
+            }
+
+            newContentHTML += data.content;
+            
+            // 2. Cập nhật DOM
+            mainContentElement.innerHTML = newContentHTML;
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // Cuộn lên đầu trang
+
+            // 3. Cập nhật Active Link trong Sidebar
+            updateActiveSidebarLink(key);
+
+             // 4. Ẩn sidebar nếu đang ở mobile (chỉ khi có sự kiện click)
+             // Logic này đã được chuyển sang hàm handleInitialLayout/toggleSidebar để xử lý tốt hơn.
+        }
+
+        // Cập nhật trạng thái active của link sidebar
+        function updateActiveSidebarLink(activeKey) {
+            const links = document.querySelectorAll('.sidebar-link');
+            links.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-target') === activeKey) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Hàm Toggle Sidebar (Giữ nguyên cho mobile click)
+        const toggleSidebar = () => {
+            const isHidden = document.body.classList.toggle('sidebar-hidden');
+            if (window.innerWidth < 768) {
+                document.body.classList.toggle('sidebar-visible', !isHidden);
+            }
+        };
+
+        // NEW: Hàm xử lý layout ban đầu và khi resize
+        const handleInitialLayout = () => {
+            if (window.innerWidth < 768) {
+                // Mobile: Mặc định ẩn sidebar
+                document.body.classList.add('sidebar-hidden');
+                document.body.classList.remove('sidebar-visible');
+            } else {
+                // Desktop: Mặc định hiển thị sidebar
+                document.body.classList.remove('sidebar-hidden', 'sidebar-visible');
+            }
+        };
+
+
+        // --- INIT VÀ SỰ KIỆN ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebarToggleMobile = document.getElementById('sidebar-toggle-mobile');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+            sidebarToggleMobile.addEventListener('click', toggleSidebar);
+            sidebarOverlay.addEventListener('click', toggleSidebar);
+
+            // Xử lý layout ban đầu
+            handleInitialLayout(); 
+            
+            // Xử lý lại layout khi resize
+            window.addEventListener('resize', handleInitialLayout);
+
+            // Tạo menu Sidebar động
+            const allKeys = ['giai-doan-1', 'giai-doan-2', 'giai-doan-3', 'giai-doan-4', 'giai-doan-5', 'giai-doan-6'];
+            
+            // Thêm mục "Tổng quan" ở đầu menu
+            const summaryLink = document.createElement('a');
+            summaryLink.href = '#summary';
+            summaryLink.textContent = 'Tổng quan Giáo án';
+            summaryLink.className = 'sidebar-link block py-3 px-4 text-gray-600 hover:bg-gray-100 transition duration-150 ease-in-out cursor-pointer text-base rounded-lg mb-2 font-bold';
+            summaryLink.setAttribute('data-target', 'summary');
+            summaryLink.addEventListener('click', (e) => { e.preventDefault(); renderContent('summary'); });
+            curriculumMenu.appendChild(summaryLink);
+
+            // Thêm các giai đoạn chi tiết
+            allKeys.forEach((key, index) => {
+                const title = curriculumData[key].title.split(':')[0]; // Lấy phần trước dấu ":"
+                
+                const link = document.createElement('a');
+                link.href = `#${key}`;
+                link.textContent = title;
+                link.className = 'sidebar-link block py-3 px-4 text-gray-600 hover:bg-gray-100 transition duration-150 ease-in-out cursor-pointer text-base rounded-lg mb-1';
+                link.setAttribute('data-target', key);
+                
+                // Gán sự kiện click để render nội dung
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    renderContent(key);
+                    // Ẩn sidebar trên mobile sau khi click vào link
+                    if (window.innerWidth < 768) {
+                        toggleSidebar();
+                    }
+                });
+                
+                curriculumMenu.appendChild(link);
+            });
+
+            // Tải nội dung Tóm tắt (Summary) khi trang load lần đầu
+            renderContent('summary');
+        });
+    </script>
+</body>
+</html>

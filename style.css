@@ -1,0 +1,84 @@
+
+        /* Sử dụng font Inter cho toàn bộ trang web */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fc; /* Màu nền nhẹ nhàng */
+        }
+        /* Style cho thanh sidebar - làm cho nó cố định */
+        #sidebar {
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease-in-out; /* Thêm transition cho hiệu ứng ẩn/hiện */
+            transform: translateX(0); /* Mặc định hiển thị trên desktop */
+            z-index: 50; /* Cao hơn nội dung chính một chút */
+        }
+        
+        /* CẬP NHẬT: Trạng thái ẩn của Sidebar trên Mobile */
+        .sidebar-hidden #sidebar {
+            transform: translateX(-100%);
+            position: fixed;
+            left: 0;
+            top: 64px; /* Bắt đầu từ dưới Navbar */
+            /* Cập nhật: Thay width: 72; bằng width: 18rem; (w-72) để tránh lỗi cú pháp CSS */
+            width: 18rem; 
+        }
+
+        /* CẬP NHẬT: Đảm bảo sidebar mở chiếm đúng kích thước */
+        .sidebar-visible #sidebar {
+             transform: translateX(0);
+             position: fixed;
+             left: 0;
+             top: 64px;
+             width: 18rem; /* Đảm bảo kích thước cố định khi mở */
+             height: calc(100vh - 64px); /* Chiều cao đầy đủ trừ Navbar */
+        }
+        
+        /* Khi sidebar hiển thị trên mobile, cần có lớp phủ */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 40;
+            display: none;
+        }
+        .sidebar-visible .sidebar-overlay {
+            display: block;
+        }
+
+
+        #sidebar::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+        /* Style cho các mục menu được chọn/active */
+        .sidebar-link.active {
+            background-color: #e0f2fe; /* Màu nền xanh nhạt */
+            color: #0d9488; /* Màu chữ xanh đậm */
+            border-left: 4px solid #0d9488; /* Thanh màu nổi bật bên trái */
+            font-weight: 600; /* Chữ đậm */
+        }
+        /* Cố định Navbar ở trên cùng */
+        #navbar {
+            z-index: 100;
+        }
+        /* Đảm bảo nội dung chính bắt đầu bên dưới Navbar và bên cạnh Sidebar */
+        #main-content-container {
+            padding-top: 64px; /* Bằng chiều cao của Navbar (h-16) */
+        }
+
+        /* Điều chỉnh Main Content khi Sidebar bị ẩn/hiện trên Desktop */
+        @media (min-width: 768px) {
+            #sidebar {
+                position: sticky;
+                top: 64px;
+                /* Cập nhật: Đảm bảo width sidebar trên desktop là 18rem */
+                width: 18rem;
+            }
+            .sidebar-hidden #sidebar {
+                /* Đảm bảo Sidebar luôn hiển thị trên desktop */
+                transform: translateX(0);
+            }
+        }
