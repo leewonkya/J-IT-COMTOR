@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giáo án Đào tạo IT Comtor (SPA)</title>
-    <!-- Tải Tailwind CSS CDN để tạo giao diện responsive và hiện đại -->
+    
+    <!-- FIX: Tải Tailwind CSS CDN - Luôn đặt ở đây để đảm bảo nó được xử lý sớm nhất -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Tải Font Inter của Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    
+    <!-- CSS TÙY CHỈNH -->
     <style>
         /* Sử dụng font Inter cho toàn bộ trang web */
         body {
@@ -33,7 +36,7 @@
             width: 18rem; 
         }
 
-        /* Đảm bảo sidebar mở chiếm đúng kích thước */
+        /* Khi sidebar hiển thị trên mobile */
         .sidebar-visible #sidebar {
              transform: translateX(0);
              position: fixed;
@@ -58,10 +61,11 @@
             display: block;
         }
 
-
+        /* Ẩn scrollbar trên Sidebar (chỉ ảnh hưởng đến một số trình duyệt) */
         #sidebar::-webkit-scrollbar {
             display: none; /* Chrome, Safari, Opera */
         }
+        
         /* Style cho các mục menu được chọn/active */
         .sidebar-link.active {
             background-color: #e0f2fe; /* Màu nền xanh nhạt */
@@ -69,16 +73,18 @@
             border-left: 4px solid #0d9488; /* Thanh màu nổi bật bên trái */
             font-weight: 600; /* Chữ đậm */
         }
+        
         /* Cố định Navbar ở trên cùng */
         #navbar {
             z-index: 100;
         }
-        /* Đảm bảo nội dung chính bắt đầu bên dưới Navbar và bên cạnh Sidebar */
+        
+        /* Đảm bảo nội dung chính bắt đầu bên dưới Navbar */
         #main-content-container {
             padding-top: 64px; /* Bằng chiều cao của Navbar (h-16) */
         }
 
-        /* Điều chỉnh Main Content khi Sidebar bị ẩn/hiện trên Desktop */
+        /* Điều chỉnh Main Content cho Desktop */
         @media (min-width: 768px) {
             #sidebar {
                 position: sticky;
@@ -95,7 +101,6 @@
         }
     </style>
 </head>
-<!-- Đã loại bỏ class "sidebar-hidden" khỏi body ban đầu -->
 <body class="text-gray-800">
 
     <!-- 1. NAVBAR (Thanh điều hướng cố định) -->
@@ -109,7 +114,7 @@
             IT Comtor Curriculum (SPA)
         </div>
         <div class="flex items-center space-x-4">
-            <span class="text-sm hidden sm:block text-gray-500">Người soạn: DEV99</span>
+            <span class="text-sm hidden sm:block text-gray-500">Người soạn: Gemini AI</span>
         </div>
     </nav>
 
@@ -137,6 +142,7 @@
         </main>
     </div>
 
+    <!-- SCRIPT CHÍNH -->
     <script>
         // --- DATA STRUCTURE (NỘI DUNG CHI TIẾT) ---
         const curriculumData = {
@@ -483,7 +489,6 @@
 
         const mainContentElement = document.getElementById('main-content');
         const curriculumMenu = document.getElementById('curriculum-menu');
-        const sidebar = document.getElementById('sidebar');
 
         // Hàm chính để render nội dung động
         function renderContent(key) {
@@ -533,8 +538,8 @@
             // 3. Cập nhật Active Link trong Sidebar
             updateActiveSidebarLink(key);
 
-             // 4. Ẩn sidebar nếu đang ở mobile (chỉ khi có sự kiện click)
-             // Logic này đã được chuyển sang hàm handleInitialLayout/toggleSidebar để xử lý tốt hơn.
+            // 4. Cập nhật URL hash để giữ trạng thái
+            window.history.pushState(null, '', `#${key}`);
         }
 
         // Cập nhật trạng thái active của link sidebar
@@ -556,8 +561,8 @@
             }
         };
 
-        // NEW: Hàm xử lý layout ban đầu và khi resize
-        const handleInitialLayout = () => {
+        // Hàm xử lý layout ban đầu và khi resize
+        const handleLayout = () => {
             if (window.innerWidth < 768) {
                 // Mobile: Mặc định ẩn sidebar
                 document.body.classList.add('sidebar-hidden');
@@ -579,10 +584,10 @@
             sidebarOverlay.addEventListener('click', toggleSidebar);
 
             // Xử lý layout ban đầu
-            handleInitialLayout(); 
+            handleLayout(); 
             
             // Xử lý lại layout khi resize
-            window.addEventListener('resize', handleInitialLayout);
+            window.addEventListener('resize', handleLayout);
 
             // Tạo menu Sidebar động
             const allKeys = ['giai-doan-1', 'giai-doan-2', 'giai-doan-3', 'giai-doan-4', 'giai-doan-5', 'giai-doan-6'];
@@ -619,8 +624,9 @@
                 curriculumMenu.appendChild(link);
             });
 
-            // Tải nội dung Tóm tắt (Summary) khi trang load lần đầu
-            renderContent('summary');
+            // Kiểm tra hash URL và tải nội dung tương ứng, hoặc tải summary nếu không có hash
+            const initialKey = window.location.hash.replace('#', '') || 'summary';
+            renderContent(initialKey);
         });
     </script>
 </body>
