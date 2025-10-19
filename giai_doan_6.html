@@ -1,0 +1,32 @@
+<div class="space-y-6">
+    <div class="p-4 bg-pink-50 border-l-4 border-pink-500 rounded-lg">
+        <h3 class="text-xl font-semibold text-pink-800">1. Từ Test đến QA: Đảm bảo chất lượng toàn diện ✅</h3>
+        <p class="mt-2 text-gray-700">Comtor là người tiếp nhận và dịch các phản hồi về chất lượng sản phẩm từ khách hàng. Cần hiểu các cấp độ lỗi và tầm quan trọng của chúng.</p>
+        <ul class="list-disc ml-6 mt-2 text-gray-700">
+            <li><b>Phân loại Test:</b> Unit, Integration, System, và đặc biệt là <b>UAT (User Acceptance Test)</b> - giai đoạn bạn giao tiếp nhiều nhất với khách hàng.</li>
+            <li><b>Mức độ nghiêm trọng (Severity):</b> Phân biệt lỗi <b>Blocker (Nghiêm trọng)</b>, <b>Major (Lớn)</b>, <b>Minor (Nhỏ)</b> để dịch đúng mức độ ưu tiên.</li>
+        </ul>
+    </div>
+
+    <div class="p-4 bg-pink-50 border-l-4 border-pink-500 rounded-lg">
+        <h3 class="text-xl font-semibold text-pink-800">2. Dịch các Tình huống giao tiếp với Khách hàng về Lỗi</h3>
+        <p class="mt-2 text-gray-700">Thực hành đối thoại trong các trường hợp nhạy cảm:</p>
+        <ul class="list-disc ml-6 mt-2 text-gray-700">
+            <li><b>Lỗi đã được Fix:</b> Dịch thông báo cho khách hàng biết lỗi đã được xử lý và yêu cầu kiểm tra lại (<b>Re-test</b>).</li>
+            <li><b>Lỗi không tái hiện được (Cannot Reproduce):</b> Dịch các câu hỏi làm rõ để Khách hàng cung cấp thêm thông tin.</li>
+            <li><b>Bug là Feature (Tính năng):</b> Dịch giải thích của đội Dev khi một lỗi bị nhầm là tính năng.</li>
+        </ul>
+    </div>
+
+    <div class="p-4 bg-pink-50 border-l-4 border-pink-500 rounded-lg">
+        <h3 class="text-xl font-semibold text-pink-800">3. Viết Test Case cơ bản (Thực hành)</h3>
+        <p class="mt-2 text-gray-700">Học cách viết một <b>Test Case</b> đơn giản để hiểu logic kiểm thử. Việc này giúp bạn dịch các tài liệu QA một cách hiệu quả hơn.</p>
+    </div>
+    
+    <div class="p-4 bg-pink-100 border-l-4 border-pink-700 rounded-lg mt-8">
+        <h3 class="text-xl font-bold text-pink-900">💡 Ví dụ Thực tế: <b>Dịch Bug Report cấp độ Block (Nghiêm trọng)</b></h3>
+        <p class="mt-2 text-gray-800"><strong>Khách hàng (Nhật) báo cáo:</strong> 「<b>本番環境</b>で、決済ボタンを押すと<b>500エラー</b>が発生し、<b>サービス全体が利用不能</b>になっています。」</p>
+        <p class="mt-2 text-gray-800"><strong>Dịch Comtor (Việt - Cần gấp):</strong> Lỗi <b>Blocker</b> (Nghiêm trọng nhất): Trên môi trường <b>Production (Thực tế)</b>, khi nhấn nút thanh toán bị lỗi <b>HTTP 500 Error</b>, dẫn đến việc <b>toàn bộ dịch vụ không thể sử dụng được</b>.</p>
+        <p class="mt-2 text-gray-800"><strong>Vai trò:</strong> Comtor cần nhận diện ngay các từ khóa (本番環境, 500エラー, サービス全体) để gắn <b>Severity: Blocker</b> và thông báo ngay lập tức cho đội Dev/PM.</p>
+    </div>
+</div>

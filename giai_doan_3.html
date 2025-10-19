@@ -1,0 +1,190 @@
+<div class="space-y-6">
+    <div class="p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-lg">
+        <h3 class="text-xl font-semibold text-yellow-800">1. Nền tảng Công nghệ & Cơ chế giao tiếp (API) 💻</h3>
+        
+        <p class="mt-2 text-gray-700 font-bold">1.1. API - "Người phục vụ" trong nhà hàng số</p>
+        <ul class="list-disc ml-6 mt-2 text-gray-700 text-sm space-y-1">
+            <li><b>Khái niệm:</b> API (Application Programming Interface) là <b>giao diện lập trình ứng dụng</b>. Dịch một cách dễ hiểu cho Khách hàng, API là <b>Người phục vụ (Waiter)</b> của hệ thống.</li>
+            <li><b>Vai trò:</b> Khách hàng (Ứng dụng A) gửi yêu cầu món ăn (Request) cho Người phục vụ (API). Người phục vụ đi vào Bếp (Server/Database), lấy dữ liệu, và mang ra món ăn (Response) cho Khách hàng.</li>
+            <li><b>Lợi ích cho Khách hàng:</b> Giúp ứng dụng bên Khách hàng và hệ thống của chúng ta <b>trao đổi dữ liệu an toàn</b> và <b>độc lập</b> mà không cần biết cách làm việc nội bộ của nhau.</li>
+        </ul>
+
+        <p class="mt-4 text-gray-700 font-bold">1.2. Quá trình Cấu thành (Thiết kế) API</p>
+        <ul class="list-disc ml-6 mt-2 text-gray-700 text-sm space-y-2">
+            <li><b>Bước 1: Design (Thiết kế)</b>: Developer và Business Analyst (BA) định nghĩa rõ ràng: <b>API này làm gì?</b> (Ví dụ: Lấy thông tin khách hàng). Định nghĩa cấu trúc Request và Response.
+                <ul class="list-circle ml-6 mt-1">
+                    <li><b>Comtor Dịch thuật:</b> Dịch tài liệu <b>API Specification</b> (API Spec) cho Khách hàng duyệt.</li>
+                </ul>
+            </li>
+            <li><b>Bước 2: Development (Phát triển)</b>: Lập trình viên viết code để API thực hiện chức năng đã thiết kế (Ví dụ: Viết logic lấy dữ liệu từ database).</li>
+            <li><b>Bước 3: Testing (Kiểm thử)</b>: Developer/Tester sử dụng công cụ như <b>Postman</b> để gửi Request và kiểm tra Response có chính xác, đầy đủ và nhanh chóng hay không.
+                <ul class="list-circle ml-6 mt-1">
+                    <li><b>Comtor Dịch thuật:</b> Dịch các <b>Test Results</b> và <b>Bug Report</b> liên quan đến API.</li>
+                </ul>
+            </li>
+        </ul>
+        
+        <p class="mt-4 text-gray-700 font-bold">1.3. Phương thức và Cấu trúc Response</p>
+        <ul class="list-disc ml-6 mt-2 text-gray-700 text-sm space-y-2">
+            <li><b>Phương thức HTTP (Methods):</b>
+                <ul>
+                    <li><b>GET:</b> Dùng để <b>lấy dữ liệu</b>.</li>
+                    <li><b>POST:</b> Dùng để <b>tạo dữ liệu mới</b>.</li>
+                    <li><b>PUT/PATCH:</b> Dùng để <b>cập nhật dữ liệu</b>.</li>
+                    <li><b>DELETE:</b> Dùng để <b>xóa dữ liệu</b>.</li>
+                </ul>
+            </li>
+            <li><b>Cấu trúc Response:</b> Comtor cần dịch các trạng thái <b>Status Code</b> và hiểu nội dung trả về.
+                <ul class="list-circle ml-6 mt-2 space-y-2">
+                    <li><b>HTTP Status Code (Mã chuẩn):</b>
+                        <ul>
+                            <li><b>2xx (Success):</b> <b>200 OK</b> &rarr; Thành công.</li>
+                            <li><b>4xx (Client Error):</b> <b>400 Bad Request</b> &rarr; Dữ liệu Request sai; <b>401 Unauthorized</b> &rarr; Không có quyền truy cập; <b>404 Not Found</b> &rarr; Không tìm thấy tài nguyên.</li>
+                            <li><b>5xx (Server Error):</b> <b>500 Internal Server Error</b> &rarr; Lỗi máy chủ.</li>
+                        </ul>
+                    </li>
+                    <li><b>Response Body (Nội dung phản hồi):</b> Thường là <b>JSON</b>. Comtor cần dịch các trường quan trọng:
+                        <ul class="list-square ml-6 mt-1">
+                            <li><b>'data'</b>: Dữ liệu trả về (Nếu thành công).</li>
+                            <li><b>'message'</b>: Thông báo lỗi hoặc thành công.</li>
+                            <li><b>'error_code'</b> hoặc <b>'code'</b>: Mã do Developer tự định nghĩa để mô tả lỗi nghiệp vụ, thường đi kèm với Status Code <b>400</b> hoặc <b>422 (Unprocessable Entity)</b>.
+                                <br>
+                                <div class="bg-gray-100 p-3 mt-2 rounded-md">
+                                    <p class="font-semibold text-gray-900 mb-1">Mã Lỗi Nghiệp vụ (Ví dụ phổ biến):</p>
+                                    <ul class="list-none ml-0 text-sm">
+                                        <li><b>1001 / USER_NOT_EXIST</b> &rarr; Người dùng không tồn tại.</li>
+                                        <li><b>1002 / EMAIL_ALREADY_USED</b> &rarr; Email đã được sử dụng.</li>
+                                        <li><b>1003 / INSUFFICIENT_BALANCE</b> &rarr; Số dư tài khoản không đủ.</li>
+                                        <li><b>2001 / INVALID_FORMAT</b> &rarr; Định dạng dữ liệu không hợp lệ.</li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="p-4 bg-yellow-100 border-l-4 border-yellow-700 rounded-lg">
+        <h3 class="text-xl font-semibold text-yellow-900">2. Thực hành Postman: Công cụ kiểm thử API 🧪</h3>
+        <p class="mt-2 text-gray-700">Postman giúp Comtor và Khách hàng kiểm tra API có hoạt động đúng theo <b>Specification</b> hay không. Việc này là cần thiết trước khi bắt đầu công việc dịch tài liệu kiểm thử (Test).</p>
+
+        <p class="mt-4 text-gray-700 font-bold">2.1. Quản lý Request và Collection</p>
+        <ul class="list-disc ml-6 mt-2 text-gray-700 text-sm">
+            <li><b>Tạo Collection (Bộ sưu tập):</b> Tương đương với việc tạo một thư mục để nhóm các API của cùng một dự án/chức năng (Ví dụ: Collection "API Đăng nhập và Thanh toán").</li>
+            <li><b>Tạo Request:</b> Nhập URL Endpoint (Đường dẫn API), chọn <b>Method</b> (GET, POST, PUT, DELETE), và thiết lập các thông số (Params, Body).</li>
+        </ul>
+
+        <p class="mt-4 text-gray-700 font-bold">2.2. Thiết lập Dữ liệu gửi đi (Request)</p>
+        <ul class="list-disc ml-6 mt-2 text-gray-700 text-sm space-y-2">
+            <li><b>A. Truyền tham số cho API GET/DELETE (Params):</b>
+                <ul class="list-circle ml-6 mt-1">
+                    <li>Sử dụng tab <b>Params</b>. Dữ liệu được truyền dưới dạng Key-Value và xuất hiện trên URL (ví dụ: `api/user?<b>id=100</b>&<b>status=active</b>`).</li>
+                    <li><b>Vai trò Comtor:</b> Dịch chính xác ý nghĩa của từng <b>Key</b> (tên tham số) mà Khách hàng yêu cầu.</li>
+                </ul>
+            </li>
+            <li><b>B. Truyền dữ liệu cho API POST/PUT (Body):</b>
+                <ul class="list-circle ml-6 mt-1">
+                    <li>Chọn tab <b>Body</b>. Có 2 cách phổ biến:
+                        <ul class="list-square ml-6 mt-1">
+                            <li><b style="color:#059669;">JSON (raw)</b> (Thường gặp nhất - FromBody): Dữ liệu cấu trúc dưới dạng JSON (ví dụ: `{"name": "Comtor A", "age": 25}`). Comtor phải đảm bảo dịch đúng cấu trúc JSON mà API Spec yêu cầu.</li>
+                            <li><b style="color:#059669;">form-data</b> (Ít phổ biến hơn - FromForm): Dữ liệu gửi dưới dạng Key-Value như một form HTML (thường dùng khi cần tải file/ảnh).</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+        <p class="mt-4 text-gray-700 font-bold">2.3. Cấu hình Xác thực (Authorization)</p>
+        <ul class="list-disc ml-6 mt-2 text-gray-700 text-sm">
+            <li>Chọn tab <b>Authorization</b>.
+            <li><b>Token (Bearer Token):</b> Phương pháp xác thực phổ biến nhất. Comtor thường được cung cấp một <b>Token</b> (chuỗi ký tự dài) để dán vào đây nhằm chứng minh bạn có quyền truy cập API.</li>
+            <li>Nếu thiếu Token, bạn sẽ nhận về lỗi <b>401 Unauthorized</b> (Không có quyền).</li>
+        </ul>
+
+        <p class="mt-4 text-gray-700 font-bold">2.4. Đọc Response (Kết quả trả về)</p>
+        <ul class="list-disc ml-6 mt-2 text-gray-700 text-sm">
+            <li><b>Status Code:</b> Kiểm tra ngay mã HTTP (200, 400, 500) để biết Request thành công hay thất bại ở cấp độ hệ thống.</li>
+            <li><b>Response Body:</b> Phân tích nội dung JSON/XML. Dịch thông báo lỗi (trường 'message') hoặc mã lỗi nghiệp vụ (trường 'error_code') cho Khách hàng/Developer.</li>
+            <li><b>Time:</b> Kiểm tra tốc độ phản hồi (Latency) của API. Nếu quá chậm (ví dụ: trên 500ms), bạn cần dịch và báo cáo vấn đề hiệu năng này.</li>
+        </ul>
+    </div>
+
+    <div class="p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-lg">
+        <h3 class="text-xl font-semibold text-yellow-800">3. Database (Cơ sở dữ liệu) và SQL cơ bản 💾</h3>
+        
+        <p class="mt-2 text-gray-700 font-bold">3.1. Database là gì? (Tủ hồ sơ của hệ thống)</p>
+        <ul class="list-disc ml-6 mt-2 text-gray-700 text-sm space-y-1">
+            <li><b>Định nghĩa:</b> Database (Cơ sở dữ liệu) là một <b>công cụ lưu trữ có tổ chức</b> được thiết kế để lưu trữ và quản lý dữ liệu một cách hiệu quả và lâu dài.</li>
+            <li><b>Hình dung:</b> Hãy coi Database là một <b>Tủ hồ sơ</b> khổng lồ và ngăn nắp, nơi chứa tất cả thông tin quan trọng của ứng dụng (danh sách người dùng, sản phẩm, đơn hàng...).</li>
+            <li><b>RDBMS:</b> Hầu hết các dự án sử dụng <b>Hệ quản trị Cơ sở dữ liệu Quan hệ (RDBMS)</b> như MySQL, PostgreSQL, nơi dữ liệu được sắp xếp thành các <b>Bảng (Table)</b> có mối quan hệ logic với nhau.</li>
+        </ul>
+
+        <p class="mt-4 text-gray-700 font-bold">3.2. Cấu trúc của một Bảng (Table)</p>
+        <p class="mt-2 text-gray-700 text-sm">Mỗi <b>Bảng</b> là một chủ đề cụ thể (ví dụ: Bảng `USERS`, Bảng `PRODUCTS`).</p>
+        <ul class="list-disc ml-6 mt-2 text-gray-700 text-sm space-y-1">
+            <li><b>Column (Cột / Trường):</b> Là các <b>thuộc tính</b> của đối tượng (ví dụ: cột `id`, `name`, `email` trong bảng `USERS`). Comtor phải dịch chính xác tên các cột này.</li>
+            <li><b>Row (Dòng / Bản ghi):</b> Là <b>dữ liệu thực tế</b> của một đối tượng cụ thể (ví dụ: một dòng chứa thông tin của User A: id=1, name='Alice', email='a@example.com').</li>
+            <li><b>Key (Khóa):</b> Là cơ chế liên kết dữ liệu.
+                <ul class="list-circle ml-6 mt-1">
+                    <li><b>Primary Key (Khóa chính):</b> Định danh duy nhất cho mỗi dòng (ví dụ: cột `id` luôn là duy nhất).</li>
+                    <li><b>Foreign Key (Khóa ngoại):</b> Dùng để <b>liên kết</b> hai bảng (ví dụ: bảng `ORDERS` có một cột `user_id` liên kết đến bảng `USERS`).</li>
+                </ul>
+            </li>
+        </ul>
+
+        <p class="mt-4 text-gray-700 font-bold">3.3. Các Câu lệnh SQL Cơ bản (Dịch thuật)</p>
+        <p class="mt-2 text-gray-700 text-sm">Comtor cần dịch yêu cầu từ Khách hàng thành logic truy vấn (SQL) để Developer hiểu rõ nghiệp vụ dữ liệu.</p>
+        <ul class="list-disc ml-6 mt-2 text-gray-700 text-sm space-y-2">
+            <li><b>SELECT (Lấy dữ liệu):</b> Yêu cầu Khách hàng muốn <b>hiển thị/truy vấn</b> dữ liệu nào.
+                <ul class="list-square ml-6 mt-1">
+                    <li>Ví dụ: 「<b>SELECT</b> * <b>FROM</b> USERS <b>WHERE</b> status = 'Active'」 &rarr; Lấy tất cả thông tin người dùng có trạng thái <b>'Hoạt động'</b>.</li>
+                </ul>
+            </li>
+            <li><b>INSERT (Tạo mới):</b> Yêu cầu Khách hàng muốn <b>thêm</b> dữ liệu mới vào hệ thống.</li>
+            <li><b>UPDATE (Cập nhật):</b> Yêu cầu Khách hàng muốn <b>thay đổi</b> dữ liệu đã có.
+                <ul class="list-square ml-6 mt-1">
+                    <li>Ví dụ: 「<b>UPDATE</b> USERS <b>SET</b> name = 'Bob' <b>WHERE</b> id = 2」 &rarr; Cập nhật tên người dùng có ID là 2 thành 'Bob'.</li>
+                </ul>
+            </li>
+            <li><b>DELETE (Xóa):</b> Yêu cầu Khách hàng muốn <b>xóa</b> bản ghi.</li>
+            <li><b>WHERE (Điều kiện):</b> Dùng để chỉ định dữ liệu muốn thao tác (Comtor cần tập trung dịch đúng logic điều kiện này).</li>
+        </ul>
+    </div>
+
+    <div class="p-4 bg-yellow-100 border-l-4 border-yellow-700 rounded-lg">
+        <h3 class="text-xl font-semibold text-yellow-900">4. Công cụ quản lý Dự án & Mã nguồn 🗃️</h3>
+        
+        <p class="mt-2 text-gray-700 font-bold">4.1. Redmine/Jira - Công cụ Quản lý Tiến độ (Task Tracking) 🎯</p>
+        <p class="mt-2 text-gray-700 text-sm">Đây là các công cụ đóng vai trò là <b>"Trung tâm điều hành"</b>, nơi Khách hàng có thể <b>theo dõi trực quan</b> và <b>review tiến độ</b> của mọi công việc đã được giao cho đội phát triển.</p>
+        <ul class="list-disc ml-6 mt-2 text-gray-700 text-sm space-y-2">
+            <li><b>Ticket/Issue (Yêu cầu/Lỗi):</b> Mỗi <b>Ticket</b> (trong Jira gọi là Issue) đại diện cho một <b>Task</b> (công việc), một <b>Feature</b> (tính năng), hoặc một <b>Bug</b> (lỗi) cần được xử lý.
+            <li><b>Status (Trạng thái):</b> Là phần quan trọng nhất để Khách hàng review. Nó chỉ ra vị trí hiện tại của công việc:
+                <ul class="list-circle ml-6 mt-1">
+                    <li><b>To Do / Open:</b> Công việc đã được ghi nhận, chờ xử lý.</li>
+                    <li><b>In Progress:</b> Developer đang <b>xử lý/code</b> (đang làm).</li>
+                    <li><b>In Review / Testing:</b> Đã code xong, đang chờ Tester hoặc Khách hàng <b>kiểm tra/duyệt</b>.</li>
+                    <li><b>Done / Closed:</b> Công việc đã <b>hoàn thành</b> và được nghiệm thu.</li>
+                </ul>
+            </li>
+            <li><b>Vai trò Comtor:</b> Dịch nội dung chi tiết trong Ticket, dịch các <b>Comment</b> (bình luận) trao đổi về tiến độ, và giúp Khách hàng hiểu ý nghĩa của các trạng thái để nắm bắt tiến độ dự án.</li>
+        </ul>
+        
+        <p class="mt-4 text-gray-700 font-bold">4.2. SVN/Git - Công cụ Quản lý Mã nguồn (Version Control) 🛠️</p>
+        <p class="mt-2 text-gray-700 text-sm">Đây là công cụ nội bộ giúp Developer quản lý các phiên bản code, đảm bảo mã nguồn không bị xung đột.</p>
+        <ul class="list-disc ml-6 mt-2 text-gray-700">
+            <li><b>Version Control:</b> Hệ thống giúp lưu trữ <b>lịch sử thay đổi</b> của mã nguồn.</li>
+            <li><b>Commit:</b> Là hành động Developer lưu lại một thay đổi cụ thể vào hệ thống.</li>
+            <li><b>Merge Conflict:</b> Là xung đột xảy ra khi hai Developer cùng sửa một đoạn code.
+            <li><b>Comtor Dịch thuật:</b> Hiểu cơ chế này để dịch các thông báo lỗi liên quan đến việc <b>Commit</b> (ví dụ: commit lỗi) hoặc <b>Merge Conflict</b> (xung đột mã nguồn) khi giao tiếp giữa các đội phát triển.</li>
+        </ul>
+    </div>
+    
+    <div class="p-4 bg-yellow-100 border-l-4 border-yellow-700 rounded-lg mt-8">
+        <h3 class="text-xl font-bold text-yellow-900">💡 Ví dụ Thực tế: <b>Dịch lỗi API</b></h3>
+        <p class="mt-2 text-gray-800"><strong>Khách hàng Nhật báo cáo:</strong> 「<b>商品登録</b>の際に、システムから <b>400 Bad Request</b> が返ってきました。」</p>
+        <p class="mt-2 text-gray-800"><strong>Dịch Comtor (Cho Dev Việt):</strong> Khi thực hiện chức năng <b>Tạo Sản phẩm (Product POST)</b>, hệ thống trả về <b>400 Bad Request</b>. Điều này thường có nghĩa là <b>Request Body bị thiếu</b> (ví dụ: chưa nhập Tên sản phẩm) hoặc dữ liệu gửi lên <b>không đúng định dạng</b> API yêu cầu. Nếu Response Body có thêm <b>error_code: 2001</b>, nghĩa là lỗi nằm ở trường dữ liệu cụ thể nào đó.</p>
+        <p class="mt-2 text-gray-800"><strong>Vai trò:</strong> Comtor dịch không chỉ thông báo lỗi mà còn <b>giải thích ngữ cảnh</b> (phương thức POST, vấn đề về dữ liệu) dựa trên kiến thức API và mã lỗi nghiệp vụ.</p>
+    </div>
+</div>
